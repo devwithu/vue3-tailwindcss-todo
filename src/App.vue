@@ -1,10 +1,53 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <div id="app" class="mx-6">
+    <todo-header></todo-header>
+    <todo-input v-on:addTodo="addTodo"></todo-input>
+    <todo-list v-bind:todoItems="todoItems" v-on:removeTodo="removeTodo"></todo-list>
+    <todo-footer v-on:removeAll="removeAll"></todo-footer>
   </div>
-  <router-view/>
 </template>
+
+<script>
+import TodoHeader from "./components/TodoHaader";
+import TodoInput from "./components/TodoInput";
+import TodoList from "./components/TodoList";
+import TodoFooter from "./components/TodoFooter";
+export default {
+  name: "App",
+  components: {
+    TodoHeader,
+    TodoInput,
+    TodoList,
+    TodoFooter
+  },
+  data() {
+    return {
+      todoItems: [],
+    }
+  },
+  created() {
+    if (localStorage.length > 0) {
+      for (let i = 0; i < localStorage.length; i++) {
+        this.todoItems.push(localStorage.key(i));
+      }
+    }
+  },
+  methods: {
+    addTodo(todoItem) {
+      localStorage.setItem(todoItem,todoItem);
+      this.todoItems.push(todoItem);
+    },
+    removeTodo(todoItem, index) {
+      localStorage.removeItem(todoItem);
+      this.todoItems.splice(index,1);
+    },
+    removeAll() {
+      localStorage.clear();
+      this.todoItems = [];
+    }
+  }
+}
+</script>
 
 <style>
 #app {
@@ -15,16 +58,4 @@
   color: #2c3e50;
 }
 
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
 </style>
